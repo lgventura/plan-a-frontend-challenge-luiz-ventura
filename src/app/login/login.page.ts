@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Storage } from '@capacitor/storage';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-login',
@@ -17,18 +18,15 @@ export class LoginPage implements OnInit {
   loginForm: FormGroup;
   isSubmitted = false;
 
-  constructor(private formBuilder: FormBuilder, private router: Router) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private app: AppComponent
+  ) {}
 
   get errorControl() {
     return this.loginForm.controls;
   }
-
-  setLoginData = async (email: string, password: string) => {
-    await Storage.set({
-      key: 'loginData',
-      value: btoa(email + ':' + password),
-    });
-  };
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -52,7 +50,20 @@ export class LoginPage implements OnInit {
       this.getFormValue('email'),
       this.getFormValue('password')
     );
+    this.loginForm.reset();
+    this.app.setLoggedUser(this.getFormValue('email'));
     this.router.navigate(['home']);
+  }
+
+  async setLoginData(email: string, password: string) {
+    await Storage.set({
+      key: 'loginData',
+      value: btoa(email + ':' + password),
+    });
+    await Storage.set({
+      key: 'email',
+      value: email,
+    });
   }
 
   getFormValue(field: string) {
