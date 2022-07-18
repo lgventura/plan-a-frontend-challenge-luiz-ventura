@@ -9,9 +9,15 @@ import { Movie } from '../interfaces/movie';
 })
 export class MovieService {
   constructor(private http: HttpClient) {}
-  getLatestMovie(page = 1): Observable<Movie> {
+  getLatestMovie(): Observable<Movie> {
     return this.http.get<Movie>(
       `${environment.baseUrl}/movie/latest?api_key=${environment.apiKey}`
+    );
+  }
+
+  getTopRatedMovies(page = 1): Observable<any> {
+    return this.http.get<any>(
+      `${environment.baseUrl}/movie/top_rated?page=${page}&api_key=${environment.apiKey}`
     );
   }
 }
